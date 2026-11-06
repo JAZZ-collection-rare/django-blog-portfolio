@@ -1,0 +1,92 @@
+{% extends "blog/base.html" %}
+{% block title %}وبلاگ | کاغذ{% endblock %}
+{% block content %}
+<section class="hero">
+    <div>
+        <span class="eyebrow">مجله آنلاین</span>
+        <h1>
+            ایده‌ها را
+            <br>
+            <em>با هم</em>
+            کشف کنیم.
+        </h1>
+    <p>یادداشت‌ها، داستان‌ها و نوشته‌هایی درباره دنیای اطرافمان.</p></div>
+    <form class="search-form" method="get">
+        <input name="q" value="{{ query }}" placeholder="جستجو در نوشته‌ها...">
+        <button type="submit">جستجو</button>
+    </form>
+</section>
+<div class="category-row">
+    <a class="{% if not selected_category %}active{% endif %}" href="{% url 'home' %}">همه</a>
+    {% for category in categories %}
+        <a class="{% if selected_category == category.slug %}active{% endif %}" href="?category={{ category.slug }}">{{ category.name }}</a>
+    {% endfor %}
+</div>
+
+{% if featured and not query and not selected_category %}
+    <section class="featured">
+        {% if featured.cover %}
+            <img src="{{ featured.cover.url }}" alt="{{ featured.title }}">
+        {% else %}
+            <div class="cover-placeholder">کاغذ / یادداشت ویژه</div>
+        {% endif %}
+        <div class="featured-content">
+            <span class="eyebrow">پیشنهاد سردبیر</span>
+            <h2>
+                <a href="{{ featured.get_absolute_url }}">{{ featured.title }}</a>
+            </h2>
+            <p>{{ featured.excerpt|default:featured.content|truncatewords:30 }}</p>
+            <a class="read-link" href="{{ featured.get_absolute_url }}">ادامه مطلب ←</a>
+        </div>
+    </section>
+{% endif %}
+
+<section class="section-heading">
+    <div>
+        <span class="eyebrow">تازه‌ترین‌ها</span>
+        <h2>آخرین نوشته‌ها</h2>
+    </div>
+    <span>{{ page_obj.paginator.count }} نوشته</span>
+</section>
+
+<div class="post-grid">
+    {% for post in posts %}
+        <article class="post-card">
+            <a class="post-cover" href="{{ post.get_absolute_url }}">
+            {% if post.cover %}
+                <img src="{{ post.cover.url }}" alt="{{ post.title }}">
+            {% else %}
+                <span>یادداشت</span>
+            {% endif %}
+            </a>
+            <div class="post-card-body">
+                {% if post.category %}
+                    <a class="post-category" href="?category={{ post.category.slug }}">{{ post.category.name }}</a>
+                {% endif %}
+                <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+                <p>{{ post.excerpt|default:post.content|striptags|truncatewords:22 }}</p>
+                <div class="post-meta">
+                    <span>{{ post.author.username }}</span>
+                    <span>{{ post.published_at|date:"Y/m/d" }}</span>
+                </div>
+            </div>
+        </article>
+
+    {% empty %}
+
+        <div class="empty-state">هنوز نوشته‌ای منتشر نشده است.</div>
+    {% endfor %}
+</div>
+{% if page_obj.has_other_pages %}
+    <nav class="pagination-row">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&category={{ selected_category }}">قبلی</a>
+        {% endif %}
+        <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&category={{ selected_category }}">بعدی</a>
+        {% endif %}
+    </nav>
+{% endif %}
+
+{% endblock %}

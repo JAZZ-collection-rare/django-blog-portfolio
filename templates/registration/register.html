@@ -1,0 +1,18 @@
+{% extends "blog/base.html" %}
+{% block title %}عضویت{% endblock %}
+
+{% block content %}
+
+<section class="form-panel auth-panel">
+    <span class="eyebrow">شروع کنید</span>
+    <h1>ساخت حساب کاربری</h1>
+    <form method="post" class="django-form">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        <button class="primary-button">ثبت‌نام</button>
+    </form>
+    <p>حساب دارید؟ <a href="{% url 'login' %}">ورود</a></p>
+</section>
+
+{% endblock %}

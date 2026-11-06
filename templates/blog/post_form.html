@@ -1,0 +1,14 @@
+{% extends "blog/base.html" %}
+{% block title %}{{ heading }}{% endblock %}
+{% block content %}
+<section class="form-panel">
+    <a class="back-link" href="{% url 'dashboard' %}">← داشبورد</a>
+    <h1>{{ heading }}</h1>
+    <form method="post" enctype="multipart/form-data" class="django-form">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        <button class="primary-button">ذخیره نوشته</button>
+    </form>
+</section>
+{% endblock %}
